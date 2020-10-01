@@ -1,0 +1,9 @@
+{
+  "apps": [{
+    "script" : "./index.ts",
+    "env": {
+      "NODE_ENV": "production",
+      "PORT": "5000"
+    }
+  }]
+}

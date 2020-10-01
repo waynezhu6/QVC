@@ -19,7 +19,8 @@ const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}...`);
 });
-const io = socketIO(server);
+
+const io = socketIO.listen(server);
 
 io.on('connection', (socket: any) => {
 
@@ -46,18 +47,14 @@ io.on('connection', (socket: any) => {
 
   socket.on('createRoom', (data: {room: string, password: string, username: string, id: string}) => {
     let result = connection.createRoom(data.room, data.password, data.username, data.id);
-    //console.log(data.room);
     if(result){
       socket.join(data.room, () => {console.log('socket now in rooms', socket.rooms)});
-      // console.log(data.room);
-      // console.log(socket.rooms);
     }
     io.to(socket.id).emit('createRoom', {result});
   });
 
   socket.on('joinRoom', (data: {room: string, password: string, username: string, id: string}) => {
     let result = connection.joinRoom(data.room, data.password, data.username, data.id);
-    //console.log(data.room);
     if(result)
       socket.join(data.room);
     io.to(socket.id).emit('joinRoom', {result});
