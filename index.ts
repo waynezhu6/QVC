@@ -2,20 +2,25 @@
 export {};
 
 const express = require('express');
-const http = require('http');
+const https = require('https');
+const fs = require('fs');
 const socketIO = require('socket.io');
 const {Connections} = require('./lib/connections');
 
+const options = {
+
+}
+
 const app = express();
-const server = http.Server(app);
-const io = socketIO(server);
+// const server = https.createServer(options, app);
 
 app.use(express.static("client/build"));
 
 const PORT = process.env.PORT || 5000;
-server.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}...`);
 });
+const io = socketIO(server);
 
 io.on('connection', (socket: any) => {
 

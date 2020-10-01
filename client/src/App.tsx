@@ -42,4 +42,4 @@ const App: React.FC = () => {
 }
 
 export default App;
-export const socket = io('http://localhost:5000');
+export const socket = io('http://35.202.216.223:8080/');
