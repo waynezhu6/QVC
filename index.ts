@@ -7,17 +7,16 @@ const fs = require('fs');
 const socketIO = require('socket.io');
 const {Connections} = require('./lib/connections');
 
-const options = {
-
-}
-
 const app = express();
-// const server = https.createServer(options, app);
+const server = https.createServer({
+  key: fs.readFileSync('./key.pem'),
+  cert: fs.readFileSync('./certificate.pem')
+}, app);
 
 app.use(express.static("client/build"));
 
 const PORT = process.env.PORT || 5000;
-const server = app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}...`);
 });
 const io = socketIO(server);
