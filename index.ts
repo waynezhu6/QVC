@@ -4,6 +4,7 @@ export {};
 const express = require('express');
 const https = require('https');
 const fs = require('fs');
+const path = require('path');
 const socketIO = require('socket.io');
 const {Connections} = require('./lib/connections');
 
@@ -17,6 +18,9 @@ const server = https.createServer({
 }, app);
 
 app.use(express.static("client/build"));
+app.get('/', function(req: any, res: any) {
+  res.sendFile(path.join(__dirname, 'client/build/index.html'));
+});
 
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => {
