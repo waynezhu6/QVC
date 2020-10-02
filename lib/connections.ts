@@ -1,66 +1,119 @@
 class Connections{
 
-  private rooms: {[key: string]: string}
-  private passwords: {[key: string]: string}
+  private users: {[key: string]: Room}
+  private rooms: {[key: string]: Room}
 
   constructor(){
+    this.users = {}; //mapping socket.id to room object
     this.rooms = {}; //mapping room name to room object
-    this.passwords = {}; //mapping room name to password
   }
 
-  createRoom(room: string, password: string, username: string, id: string): boolean{
+  createRoom(name: string, password: string, username: string, id: string): boolean{
     //returns true if room is created
 
     //check if room exists
-    if(this.roomExists(room))
+    if(this.hasRoom(name))
       return false;
 
-    this.passwords[room] = password;
-    //this.rooms[room] = new room()
+    if(!this.sanitizeInput(name, password, username))
+      return false;
+
+    let room = new Room(name, password);
+    room.addUser(id, username);
+    this.rooms[name] = room;
+    this.users[id] = room;
     return true;
   }
 
-  joinRoom(room: string, password: string, username: string, id: string): boolean{
+  joinRoom(name: string, password: string, username: string, id: string): boolean{
     //returns true if room and password are valid
-    if(this.roomExists(room)){
-      if(this.passwords[room] === password){
+    
+    if(!this.sanitizeInput(name, password, username))
+      return false;
+
+    if(this.hasRoom(name)){
+      let room = this.getRoom(name);
+      if(room.authenticate(password)){
+        room.addUser(id, username);
+        this.users[id] = room;
         return true;
       }
     }
     return false;
   }
 
-  roomExists(room: string): boolean{
-    //returns true if this room exists
-    let keys = Object.keys(this.passwords);
-    for(const key of keys){
-      if(key === room)
-        return true;
+  leaveRoom(id: string): void{
+    if(id in this.users){
+      let room = this.users[id];
+      room.removeUser(id);
+      delete this.users[id];
+      if(room.isEmpty()){
+        delete this.rooms[room.name];
+        console.log('deleted room ' + room.name)
+      }
     }
-    return false;
   }
 
-  usernameExists(room: string, username: string){
-    //returns true if room has the user with username
-    //assumes room exists
+  hasRoom(name: string): boolean{
+    //returns true if room exists
+    return name in this.rooms;
+  }
+
+  getRoom(name: string): Room{
+    //returns room, assuming it exists
+    return this.rooms[name];
+  }
+
+  sanitizeInput(name: string, password: string, username: string): boolean{
+    //return true if user inputs are non-empty and 20 chars at most
+    let n = 0 < name.length && name.length <= 20;
+    let p = 0 < password.length && password.length <= 20;
+    let u = 0 < username.length && username.length <= 20;
+    return n && p && u;
   }
 
 }
 
 class Room{
-  private members: string[];
+  private members: {[key: string]: string}; //mapping socket.id to username
+  public name: string;
+  private password: string;
   
-  constructor(owner: string){
-    this.members = [];
+  constructor(name: string, password: string){
+    this.members = {};
+    this.name = name;
+    this.password = password;
+  }
+
+  authenticate(password: string){
+    return password === this.password;
+  }
+
+  addUser(id: string, username: string){
+    //registers user with id, username
+    //assumes username doesn't exist
+    this.members[id] = username;
+  }
+
+  removeUser(id: string){
+    //removes user with id
+    //assumes user exists
+    delete this.members[id]
   }
 
   hasUser(username: string){
     //returns true if this room has username
-    for(const user of this.members){
+    let values = Object.values(this.members);
+    for(const user of values){
       if(user === username) 
         return true;
     }
     return false;
+  }
+
+  isEmpty(){
+    //returns true if this room has 0 members
+    return Object.keys(this.members).length === 0;
   }
   
 }

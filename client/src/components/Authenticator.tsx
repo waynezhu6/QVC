@@ -22,23 +22,26 @@ const Authenticator: React.FC = () => {
     <div className={styles.body}>
       <div className={styles.wrapper}>
 
-        <div className={styles.form}>
+        <form className={styles.form}>
           <input 
             type="text" 
             placeholder='Room Name' 
             onChange={e => setRoom(e.target.value)}
+            required
           />
           <input 
             type="password" 
             placeholder='Room Password'
             onChange={e => setPassword(e.target.value)}
+            required
           />
           <input 
             type="text" 
             placeholder='Username'
             onChange={e => setUsername(e.target.value)}
+            required
           />
-        </div>
+        </form>
 
         <div className={styles.buttons}>
           <button onClick={() => createRoom()}>Create Room</button>

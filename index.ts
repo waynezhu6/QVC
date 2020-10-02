@@ -9,8 +9,11 @@ const {Connections} = require('./lib/connections');
 
 const app = express();
 const server = https.createServer({
-  key: fs.readFileSync('/etc/ssl/certs/key.pem'),
-  cert: fs.readFileSync('/etc/ssl/certs/certificate.pem')
+  // key: fs.readFileSync('/etc/ssl/certs/key.pem'),
+  // cert: fs.readFileSync('/etc/ssl/certs/certificate.pem')
+
+  key: fs.readFileSync('./key.pem'),
+  cert: fs.readFileSync('./certificate.pem')
 }, app);
 
 app.use(express.static("client/build"));
@@ -22,7 +25,11 @@ server.listen(PORT, () => {
 
 const io = socketIO.listen(server);
 
-io.on('connection', (socket: any) => {
+io.on('connect', (socket: any) => {
+
+  socket.on('disconnect', (e: any) => {
+    connection.leaveRoom(socket.id);
+  });
 
   socket.on('pause', (data: {id: string, currentTime: number}) => {
     let rooms = Object.values(socket.rooms);
@@ -45,16 +52,16 @@ io.on('connection', (socket: any) => {
   //   io.to(socket.id).emit('requestRoom', {result});
   // });
 
-  socket.on('createRoom', (data: {room: string, password: string, username: string, id: string}) => {
-    let result = connection.createRoom(data.room, data.password, data.username, data.id);
+  socket.on('createRoom', (data: {room: string, password: string, username: string}) => {
+    let result = connection.createRoom(data.room, data.password, data.username, socket.id);
     if(result){
-      socket.join(data.room, () => {console.log('socket now in rooms', socket.rooms)});
+      socket.join(data.room);
     }
     io.to(socket.id).emit('createRoom', {result});
   });
 
-  socket.on('joinRoom', (data: {room: string, password: string, username: string, id: string}) => {
-    let result = connection.joinRoom(data.room, data.password, data.username, data.id);
+  socket.on('joinRoom', (data: {room: string, password: string, username: string}) => {
+    let result = connection.joinRoom(data.room, data.password, data.username, socket.id);
     if(result)
       socket.join(data.room);
     io.to(socket.id).emit('joinRoom', {result});
