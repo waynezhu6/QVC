@@ -2,20 +2,14 @@
 export {};
 
 const express = require('express');
-const https = require('https');
-const fs = require('fs');
+const http = require('http');
+// const fs = require('fs');
 const path = require('path');
 const socketIO = require('socket.io');
 const {Connections} = require('./lib/connections');
 
 const app = express();
-const server = https.createServer({
-  key: fs.readFileSync('/etc/ssl/certs/key.pem'),
-  cert: fs.readFileSync('/etc/ssl/certs/certificate.pem')
-
-  // key: fs.readFileSync('./key.pem'),
-  // cert: fs.readFileSync('./certificate.pem')
-}, app);
+const server = http.createServer(app);
 
 app.use(express.static("client/build"));
 app.get('/', function(req: any, res: any) {
