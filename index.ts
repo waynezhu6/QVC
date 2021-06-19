@@ -12,7 +12,7 @@ const app = express();
 const server = http.createServer(app);
 
 app.use(express.static("client/build"));
-app.get('/', function(req: any, res: any) {
+app.get('/', (req: any, res: any) => {
   res.sendFile(path.join(__dirname, 'client/build/index.html'));
 });
 
@@ -23,25 +23,34 @@ server.listen(PORT, () => {
 
 const io = socketIO.listen(server);
 
-io.on('connect', (socket: any) => {
+io.on('connection', (socket: any) => {
+
+  console.log(socket.id, 'connected');
 
   socket.on('disconnect', (e: any) => {
+    console.log(socket.id, 'disconnected')
     connection.leaveRoom(socket.id);
   });
 
   socket.on('pause', (data: {id: string, currentTime: number}) => {
+    console.log('paused')
     let rooms = Object.values(socket.rooms);
     for(const room of rooms){
-      if(room != socket.id)
+      if(room != socket.id){
+        console.log('emitting pause to room ' + room);
         io.to(room).emit('pause', data);
+      }
     }
   });
 
   socket.on('play', (data: {id: string, currentTime: number}) => {
+    console.log('playing')
     let rooms = Object.values(socket.rooms);
     for(const room of rooms){
-      if(room != socket.id)
+      if(room != socket.id){
+        console.log('emitting play to room ' + room);
         io.to(room).emit('play', data);
+      }
     }
   });
 
@@ -55,6 +64,8 @@ io.on('connect', (socket: any) => {
     if(result){
       socket.join(data.room);
     }
+
+    console.log(result);
     io.to(socket.id).emit('createRoom', {result});
   });
 
@@ -62,6 +73,8 @@ io.on('connect', (socket: any) => {
     let result = connection.joinRoom(data.room, data.password, data.username, socket.id);
     if(result)
       socket.join(data.room);
+
+    console.log(result);
     io.to(socket.id).emit('joinRoom', {result});
   });
 

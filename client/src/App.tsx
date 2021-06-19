@@ -6,6 +6,7 @@ import './App.scss';
 import Viewer from './pages/Viewer';
 import Configurator from './components/Configurator';
 import Authenticator from './components/Authenticator'
+import SplashPage from './components/SplashPage';
 
 const App: React.FC = () => {
 
@@ -27,8 +28,9 @@ const App: React.FC = () => {
 
   return(
     <div>
+      <SplashPage/>
       <Viewer video={video} subtitles={subtitles}/>
-      {!auth ? <Authenticator/> : null}
+      {/* {!auth ? <Authenticator/> : null}
       {!auth || video !== null ? null :
         <Configurator 
           video = {video}
@@ -36,11 +38,11 @@ const App: React.FC = () => {
           subtitles = {subtitles} 
           setSubtitles={setSubtitles}
         />
-      }
+      } */}
     </div>
   );
 }
 
 export default App;
-export const socket = io('http://35.202.216.223:5000/', {secure: true});
-// export const socket = io('https://localhost:5000', {secure: true});
+//export const socket = io('http://35.202.216.223:5000/', {secure: true});
+export const socket = io('http://localhost:8080', {secure: true});

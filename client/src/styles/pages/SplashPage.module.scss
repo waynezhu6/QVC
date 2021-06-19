@@ -1,0 +1,89 @@
+.body{
+  width: 100vw;
+  height: 100vh;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 3;  
+}
+
+.container{
+  background-color: #343656;
+  max-width: 400px;
+  margin: auto;
+  padding: 24px;
+  margin-top: 6%;
+  border-radius: 8px;
+
+  .title{
+    color: white;
+    text-align: center;
+    font-size: 24px;
+  }
+
+  .subtitle{
+    color: #A0A2C2;
+    margin-top: 16px;
+    margin-bottom: 40px;
+    font-size: 17px;
+    line-height: 24px;
+    font-weight: 300;
+  }
+}
+
+.option{
+  width: 100%;
+  color: white;
+  background-color: #474971;
+  border-radius: 8px;
+  margin-top: 16px;
+  padding: 20px;
+  cursor: pointer;
+  font-weight: 300;
+}
+
+.auth{
+
+  .label{
+    color: #A0A2C2;
+    margin-top: 16px;
+    font-weight: 300;
+    font-size: 14px;
+  }
+
+  input{
+    margin-top: 8px;
+    width: 100%;
+    padding: 10px 16px 10px 16px;
+    font-size: 16px;
+    outline: none;
+    border: none;
+    background-color: #232538;
+    color: white;
+    border-radius: 4px;
+  }
+
+  button{
+    margin-top: 60px;
+    margin-bottom: 16px;
+    width: 100%;
+    background-color: #1877F2;
+    outline: none;
+    border: none;
+    color: white;
+    font-size: 17px;
+    font-weight: 300;
+    height: 40px;
+    line-height: 40px;
+    cursor: pointer;
+    border-radius: 4px;
+  }
+
+  .alternative{
+    color: #1877F2; 
+    cursor: pointer;
+    text-align: center;
+    font-size: 16px;
+    font-weight: 300;
+  }
+}
