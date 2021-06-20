@@ -3,13 +3,14 @@ export {};
 
 const express = require('express');
 const http = require('http');
-// const fs = require('fs');
+const cors = require('cors');
 const path = require('path');
 const socketIO = require('socket.io');
 const {Connections} = require('./lib/connections');
 
 const app = express();
 const server = http.createServer(app);
+app.use(cors())
 
 app.use(express.static("client/build"));
 app.get('/', (req: any, res: any) => {
