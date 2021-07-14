@@ -26,30 +26,24 @@ const io = socketIO.listen(server);
 
 io.on('connection', (socket: any) => {
 
-  console.log(socket.id, 'connected');
 
   socket.on('disconnect', (e: any) => {
-    console.log(socket.id, 'disconnected')
     connection.leaveRoom(socket.id);
   });
 
   socket.on('pause', (data: {id: string, currentTime: number}) => {
-    console.log('paused')
     let rooms = Object.values(socket.rooms);
     for(const room of rooms){
       if(room != socket.id){
-        console.log('emitting pause to room ' + room);
         io.to(room).emit('pause', data);
       }
     }
   });
 
   socket.on('play', (data: {id: string, currentTime: number}) => {
-    console.log('playing')
     let rooms = Object.values(socket.rooms);
     for(const room of rooms){
       if(room != socket.id){
-        console.log('emitting play to room ' + room);
         io.to(room).emit('play', data);
       }
     }
@@ -66,7 +60,6 @@ io.on('connection', (socket: any) => {
       socket.join(data.room);
     }
 
-    console.log(result);
     io.to(socket.id).emit('createRoom', {result});
   });
 
@@ -75,7 +68,6 @@ io.on('connection', (socket: any) => {
     if(result)
       socket.join(data.room);
 
-    console.log(result);
     io.to(socket.id).emit('joinRoom', {result});
   });
 

@@ -1,24 +1,20 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { FaFileVideo } from 'react-icons/fa';
 import { MdSubtitles } from 'react-icons/md';
 import styles from '../styles/components/Configurator.module.scss';
+import { StateContext, State } from './StateContext';
 
-type Props = {
-  video: File | null,
-  setVideo: React.Dispatch<React.SetStateAction<File | null>>,
-  subtitles: File | null,
-  setSubtitles: React.Dispatch<React.SetStateAction<File | null>>
-}
 
-const Configurator: React.FC<Props> = (props) => {
+const Configurator: React.FC = () => {
+
+  const [state, setState] = useContext(StateContext) as [State, React.Dispatch<React.SetStateAction<State>>];
 
   const {getRootProps, getInputProps, open} = useDropzone({
     // Disable click and keydown behavior
     noClick: true,
     noKeyboard: true,
     maxFiles: 2,
-    accept: 'text/vtt, video/mp4, video/webm, application/pdf, image/png',
     onDropAccepted: files => onDrop(files)
   });
 
@@ -27,10 +23,10 @@ const Configurator: React.FC<Props> = (props) => {
       for(const file of files){
         let ext = file.name.slice(-3);
         if(ext === "mp4"){
-          props.setVideo(file);
+          setState({...state, video: file});
         }
         else if(ext === "vtt"){
-          props.setSubtitles(file);
+          setState({...state, subtitles: file});
         }
       }
   }
@@ -47,7 +43,7 @@ const Configurator: React.FC<Props> = (props) => {
           <div className={styles.text}>
             <span className={styles.label}>Drag &amp; Drop</span>
             <span className={styles.highlight}>MP4 or WEBM</span>
-            <span className={styles.filename}>{props.video ? props.video.name : ""}</span>
+            <span className={styles.filename}>{state.video ? state.video.name : ""}</span>
           </div>
         </div>
 
@@ -56,7 +52,7 @@ const Configurator: React.FC<Props> = (props) => {
           <div className={styles.text}>
             <span className={styles.label}>Drag &amp; Drop</span>
             <span className={styles.highlight}>VTT</span>
-            <span className={styles.filename}>{props.subtitles ? props.subtitles.name : ""}</span>
+            <span className={styles.filename}>{state.subtitles ? state.subtitles.name : ""}</span>
           </div>
         </div>
 
@@ -64,7 +60,17 @@ const Configurator: React.FC<Props> = (props) => {
           Or Choose a File
         </div>
 
-        <div className={`${styles.chooseFile} ${styles.playDisabled}`}>
+        <div 
+          className={`
+            ${styles.chooseFile} 
+            ${state.video ? styles.playEnabled : styles.playDisabled}
+          `}
+          onClick={() => {
+            if(state.video){
+              setState({...state, isConfigured: true})
+            }
+          }}
+        >
           Continue
         </div>
         

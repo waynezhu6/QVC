@@ -1,18 +1,17 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useContext } from 'react'
 import { socket } from '../App';
 //import Plyr from 'plyr'
 import 'plyr/dist/plyr.css'
  
 import styles from '../styles/pages/Viewer.module.scss';
+import { StateContext, State } from '../components/StateContext';
 
-type Props = {
-  video: File | null,
-  subtitles: File | null
-}
 
-const Viewer: React.FC<Props> = (props) => {
+const Viewer: React.FC = () => {
 
+  const [state] = useContext(StateContext) as [State];
   var player = useRef<HTMLVideoElement>(null);
+  var track = useRef<HTMLTrackElement>(null);
  
   useEffect(() => {
 
@@ -50,9 +49,14 @@ const Viewer: React.FC<Props> = (props) => {
       }
     });
 
-    if(props.video !== null && player.current){
-      let url = URL.createObjectURL(props.video);
+    if(state.video !== null && player.current){
+      let url = URL.createObjectURL(state.video);
       player.current.src = url;
+    }
+
+    if(state.subtitles !== null && track.current){
+      let url = URL.createObjectURL(state.subtitles);
+      track.current.src = url;
     }
 
     return(() => {
@@ -62,12 +66,14 @@ const Viewer: React.FC<Props> = (props) => {
       }
     });
 
-  }, [props]);
+  }, [state.video, state.subtitles]);
 
   return(
-    <div className={`${styles.body} ${props.video ? styles.show : styles.hidden}`}>
-      <video controls ref={player}/>
-    </div>
+    <div className={`${styles.body} ${state.isConfigured ? styles.show : styles.hidden}`}>
+      <video controls ref={player}>
+        <track label="English" kind="subtitles" ref={track}/>
+      </video>
+    </div> 
   );
 }
 

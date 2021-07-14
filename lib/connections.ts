@@ -12,11 +12,13 @@ class Connections{
     //returns true if room is created
 
     //check if room exists
-    if(this.hasRoom(name))
+    if(this.hasRoom(name)){
       return false;
+    }
 
-    if(!this.sanitizeInput(name, password, username))
+    if(!this.sanitizeInput(name, password, username)){
       return false;
+    }
 
     let room = new Room(name, password);
     room.addUser(id, username);
@@ -28,8 +30,9 @@ class Connections{
   joinRoom(name: string, password: string, username: string, id: string): boolean{
     //returns true if room and password are valid
     
-    if(!this.sanitizeInput(name, password, username))
+    if(!this.sanitizeInput(name, password, username)){
       return false;
+    }
 
     if(this.hasRoom(name)){
       let room = this.getRoom(name);
@@ -49,7 +52,6 @@ class Connections{
       delete this.users[id];
       if(room.isEmpty()){
         delete this.rooms[room.name];
-        console.log('deleted room ' + room.name)
       }
     }
   }
@@ -68,8 +70,9 @@ class Connections{
     //return true if user inputs are non-empty and 20 chars at most
     let n = 0 < name.length && name.length <= 20;
     let p = 0 < password.length && password.length <= 20;
-    let u = 0 < username.length && username.length <= 20;
-    return n && p && u;
+    // let u = 0 < username.length && username.length <= 20;
+    // return n && p && u;
+    return n && p;
   }
 
 }
